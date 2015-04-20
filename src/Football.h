@@ -1,25 +1,15 @@
-//
-//  Football.h
-//  Project4
-//
-//  Created by Joshua Engelsma on 4/18/15.
-//
-//
+#ifndef MY_TORUS_H
+#define MY_TORUS_H
+#include <vector>
+#include <GL/glew.h>
+#include "Shader.h"
+using namespace std;
 
-#ifndef __Project4__Football__
-#define __Project4__Football__
-
-#include "BufferObject.h"
-#include "GLUquadricCylinder.h"
-
-
-class Football : public BufferObject {
-protected:
+class Football {
+private:
+    GLuint vertex_buffer, index_buffer, normal_buffer;
 public:
-    void build (void*);
-    void render(bool);
-    GLUquadricCylinder front_half;
-    GLUquadricCylinder back_half;
+    void build();
+    void render(Shader* s) const;
 };
-
-#endif /* defined(__Project4__Football__) */
+#endif
