@@ -36,36 +36,36 @@
 class Game {
 private:
     Timer timer;
-
+    
     vector<std::pair<void*, glm::mat4x4>> objects;
-
+    
     Football football;
     Upright uprights;
     Bleachers bleachers;
     Bleachers bleachers1;
     Upright uprights1;
-
+    
     glm::mat4 camera_cf, light_cf;
     glm::mat4 football_cf, uprights_cf, uprights1_cf, bleachers_cf, bleachers1_cf, field_cf;
-
+    
     glm::vec3 wind_speed;
     glm::vec3 football_speed;
     glm::vec3 GRAVITY = glm::vec3{0, 0, -9.81};
-
+    
     float *football_cf_values;
-
+    
     int score;
-
+    
     void generate_conditions();
     void check_collisions();
-
+    
 public:
     void init();
     void update();
     int get_score();
     void reset();
     vector< pair<void*, glm::mat4x4> > get_objects();
-
+    
 };
 
 #endif // GAME_H_INCLUDED
