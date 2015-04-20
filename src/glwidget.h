@@ -1,6 +1,7 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
+#include <GL/glew.h>
 #include <QGLWidget>
 #include <QTimer>
 #include <GLUquadricCylinder.h>
@@ -11,6 +12,7 @@
 #include <glm/gtx/io.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
+#include "Game.h"
 
 class GLWidget : public QGLWidget
 {
@@ -25,7 +27,10 @@ public:
 private:
     QTimer timer;
     GLUquadricCylinder cyl;
-    glm::mat4 camera_cf;
+    Cube cube;
+    glm::mat4 camera_cf,light1_cf, light0_cf;
+
+    Game model;
 
 };
 

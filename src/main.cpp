@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #define GLEW_STATIC
-//#include <GL/glew.h>
+#include <GL/glew.h>
 #ifdef __APPLE__
 #include <OpenGL/glu.h>
 #else

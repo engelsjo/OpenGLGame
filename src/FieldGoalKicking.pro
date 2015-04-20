@@ -18,13 +18,29 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     glwidget.cpp \
     GLUquadricCylinder.cpp \
-    ReflectanceTable.cpp
+    ReflectanceTable.cpp \
+    GLUquadricSphere.cpp \
+    Cube.cpp \
+    Upright.cpp \
+    Bleachers.cpp \
+    Football.cpp \
+    Game.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
     GLUquadricCylinder.h \
-    ReflectanceTable.h
+    ReflectanceTable.h \
+    GLUquadricSphere.h \
+    Cube.h \
+    BufferObject.h \
+    Upright.h \
+    Bleachers.h \
+    Football.h \
+    Game.h \
+    Timer.hpp
 
 FORMS    += mainwindow.ui
 
 INCLUDEPATH += /usr/local/include
+
+LIBS += -L/usr/local/lib -lGLEW

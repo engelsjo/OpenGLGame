@@ -1,24 +1,21 @@
 //
-//  GLUquadricCylinder.cpp
+//  GLUquadricSphere.cpp
 //  ProjectTwo
 //
 //  Created by Joshua Engelsma on 3/14/15.
 //
 //
 
-#include "GLUquadricCylinder.h"
+#include "GLUquadricSphere.h"
 #include "ReflectanceTable.h"
 #include <vector>
 #include <GLUT/GLUT.h>
-#include <iostream>
 
 using namespace std;
-void GLUquadricCylinder::build(string mat) {
-
+void GLUquadricSphere::build(string mat) {
     q_cyl = gluNewQuadric();
 
     /* control the direction of normal vectors */
-
     gluQuadricOrientation (q_cyl, GLU_OUTSIDE);
 
     /* control the generation of normal vectors: one normal per vertex */
@@ -29,7 +26,6 @@ void GLUquadricCylinder::build(string mat) {
     material_table.init_table();
 
     MATERIAL = mat;
-
 
     vector<float> ambient_v = material_table.lookup_table[MATERIAL]["AMBIENT"];
     vector<float> diffuse_v = material_table.lookup_table[MATERIAL]["DIFFUSE"];
@@ -44,11 +40,11 @@ void GLUquadricCylinder::build(string mat) {
     SHININESS = shininess;
 }
 
-void GLUquadricCylinder::render(float topr, float botr, float height) {
+void GLUquadricSphere::render(float rad) {
     /* more code here for rendering other components */
     glMaterialfv(GL_FRONT, GL_AMBIENT, AMBIENT);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, DIFFUSE);
     glMaterialfv(GL_FRONT, GL_SPECULAR, SPECULAR);
     glMaterialf(GL_FRONT, GL_SHININESS, SHININESS);
-    gluCylinder(q_cyl, topr, botr, height, 25, 25);
+    gluSphere(q_cyl, rad, 25, 25);
 }
