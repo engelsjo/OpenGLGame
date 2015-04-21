@@ -180,7 +180,21 @@ void win_refresh (GLFWwindow *win) {
     /* we use the Z-axis of the light CF as the spotlight direction */
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, glm::value_ptr(glm::column(light1_cf, 2)));
     
-    //grab the bleachers
+    model.update();
+    int score = model.get_score();
+    
+    if (score != -1){ //we need to act... something happened
+        if (score == 0){
+            //you suck.. you missed
+            std::cout << "You missed" << std::endl;
+            model.reset();
+            
+        }else{
+            //you scored some points
+            std::cout << "you scored " << score << " " << endl;
+            model.reset();
+        }
+    }
     
     auto objects = model.get_objects();
     if (objects.size() != 0){
@@ -315,6 +329,9 @@ void key_handler (GLFWwindow *win, int key, int scan_code, int action, int mods)
                 break;
             case GLFW_KEY_DOWN:
                 camera_cf = glm::translate(glm::vec3{0, .05, 0}) * camera_cf;
+                break;
+            case GLFW_KEY_0:
+                model.kick(glm::vec3{0, 50, 150});
                 break;
         }
     }

@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#define SCALE 25.0
+
 using namespace std;
 
 void Game::init() {
@@ -33,7 +35,7 @@ void Game::init() {
     objects.push_back(make_pair(&bleachers1, bleachers1_cf));
     objects.push_back(make_pair(&uprights1, uprights1_cf));
     
-    
+    score = -1;
     football_cf_values = (float*)glm::value_ptr(football_cf);
 }
 
@@ -42,7 +44,9 @@ void Game::generate_conditions() {
     int y_limit = min(2*fx, 160);
     int fy = rand()%y_limit - y_limit/2;
     
-    football_cf = glm::translate(glm::vec3{fx, fy, .25});
+    football_cf = glm::translate(glm::vec3{fx, fy, .5 * SCALE});
+    football_cf *= glm::rotate(glm::radians(90.0f), glm::vec3{0, 1, 0});
+    
     
     int wx = rand()%20 - 10;
     int wy = rand()%20 - 10;
