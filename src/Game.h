@@ -55,6 +55,7 @@ private:
     float *football_cf_values;
     
     int score;
+    bool is_kicked;
     
     void generate_conditions();
     void check_collisions();
@@ -65,6 +66,7 @@ public:
     int get_score();
     void reset();
     vector< pair<void*, glm::mat4x4> > get_objects();
+    void kick( glm::vec3 );
     
 };
 
