@@ -46,11 +46,11 @@ private:
     Upright uprights1;
     
     glm::mat4 camera_cf, light_cf;
-    glm::mat4 football_cf, uprights_cf, uprights1_cf, bleachers_cf, bleachers1_cf, field_cf;
+    glm::mat4 uprights_cf, uprights1_cf, bleachers_cf, bleachers1_cf, field_cf;
     
     glm::vec3 wind_speed;
     glm::vec3 football_speed;
-    glm::vec3 GRAVITY = glm::vec3{0, 0, -9.81};
+    glm::vec3 GRAVITY = glm::vec3{9.81, 0, 0};
     
     float *football_cf_values;
     
@@ -61,6 +61,7 @@ private:
     void check_collisions();
     
 public:
+    glm::mat4 football_cf;
     void init();
     void update();
     int get_score();

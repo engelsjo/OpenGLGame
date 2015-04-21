@@ -35,7 +35,8 @@
 #include "Bleachers.h"
 #include "Football.h"
 #include "Game.h"
-#include "GLUquadricSphere.h"
+#include "Cube.h"
+#include "Planef.h"
 
 void init_model();
 void win_refresh(GLFWwindow*);
@@ -46,23 +47,31 @@ float time_elapsed;
 static Timer timer;
 
 glm::mat4 camera_cf, light1_cf, light0_cf;
+glm::mat4 plane_cf;
 
 /* light source setting */
 GLfloat light0_color[] = {1.0, 1.0, 1.0, 1.0};   /* color */
 GLfloat light1_color[] = {1.0, 1.0, 0.8, 1.0};  /* color */
 GLfloat black_color[] = {0.0, 0.0, 0.0, 1.0};   /* color */
 
+Planef field;
 Game model;
-GLUquadricSphere ball;
+glm::vec3 kick_vector;
+
 
 //image path
 const string TOP_DIR = "/Users/joshuaengelsma/Documents/CIS-367/Project4/";
 
 Shader * football_shader;
+Shader * field_shader;
+unsigned char* field_texture;
 unsigned char* football_texture;
+GLuint texId2;
 GLuint texId;
 
 vector< pair< void*, glm::mat4x4* > >* objects;
+
+int SCORE = 0;
 
 
 
@@ -101,15 +110,42 @@ void initShaders() {
         
         static float c1[] = {0.3529f, 0.745f, 0.3529f, 1.0f,
             0.9333, 0.0, 0.0, 1.0};
-        football_shader->use();
-     
-        //int u1 = glGetUniformLocation(football_shader->id(), "colors");
-        //glUniform4fv(u1, 8, c1);
+    }
+    catch (const char* s) {
+        cerr << "Shader init error: " << s << endl;
+    }
+}
+
+void initFieldShaders() {
+    int img_width, img_height, channels;
+    field_texture = stbi_load((TOP_DIR + "images/field_image.png").c_str(),
+                                 &img_width, &img_height, &channels, 3);
+    
+    printf ("Image size is %dx%d\n", img_width, img_height);
+    glGenTextures(1, &texId2);
+    glBindTexture(GL_TEXTURE_2D, texId2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 img_width, img_height,
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 field_texture);
+    
+    glBindTexture (GL_TEXTURE_2D, 0);
+    
+    try {
+        field_shader = new Shader(TOP_DIR + "vshader-field.vs",
+                                     TOP_DIR + "fshader-field.fs");
         
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texId);
-        int tex_handle = glGetUniformLocation(football_shader->id(), "football_tex");
-        glUniform1i(tex_handle, 0);
+        
+        static float c1[] = {0.3529f, 0.745f, 0.3529f, 1.0f,
+            0.9333, 0.0, 0.0, 1.0};
     }
     catch (const char* s) {
         cerr << "Shader init error: " << s << endl;
@@ -151,28 +187,6 @@ void win_refresh (GLFWwindow *win) {
     glMultMatrixf (glm::value_ptr(camera_cf));
     
     
-    /* Specify the reflectance property of the ground using glColor
-     (instead of glMaterial....)
-     */
-    glEnable (GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    glColor3ub (29, 100, 56);
-    
-    glBegin (GL_QUADS);
-    const int FIELD_WIDTH = 225;
-    const int FIELD_LENGTH = 200;
-    glNormal3f (0.0f, 0.0f, 1.0f); /* normal vector for the ground */
-    glVertex2i (FIELD_WIDTH, FIELD_LENGTH);
-    glNormal3f (0.0f, 0.0f, 1.0f); /* normal vector for the ground */
-    glVertex2i (-FIELD_WIDTH, FIELD_LENGTH);
-    glNormal3f (0.0f, 0.0f, 1.0f); /* normal vector for the ground */
-    glVertex2i (-FIELD_WIDTH, -FIELD_LENGTH);
-    glNormal3f (0.0f, 0.0f, 1.0f); /* normal vector for the ground */
-    glVertex2i (FIELD_WIDTH, -FIELD_LENGTH);
-    glEnd();
-    glDisable (GL_COLOR_MATERIAL);
-    
-    
     /* place the light source in the scene. */
     glLightfv (GL_LIGHT0, GL_POSITION, glm::value_ptr(glm::column(light0_cf, 3)));
     
@@ -190,14 +204,51 @@ void win_refresh (GLFWwindow *win) {
         
         if (score != -1){ //we need to act... something happened
             if (score == 0){
+                int x;
+                int y;
+                int z;
+                string response;
                 //you suck.. you missed
                 std::cout << "You missed" << std::endl;
-                //model.reset();
+                cout << "do you want to kick again? " << endl;
+                cin >> response;
+                if (response.compare("y") == 0){
+                    model.reset();
+                    cout << "Enter the x for next kick ";
+                    cin >> x;
+                    cout << "Enter the y for next kick ";
+                    cin >> y;
+                    cout << "Enter the z for next kick ";
+                    cin >> z;
+                    kick_vector = glm::vec3 {z, y, x};
+                }
                 
             }else{
-                //you scored some points
-                std::cout << "you scored " << score << " " << endl;
-                //model.reset();
+                int x;
+                int y;
+                int z;
+                string response;
+                //you scored
+                std::cout << "You scored" << std::endl;
+                SCORE += model.get_score();
+                std::cout << "Score is now " << SCORE << endl;
+                if (SCORE > 100){
+                    std::cout << "You win!!!!, resetting game to play again!!!" << endl;
+                    SCORE = 0;
+                    model.reset();
+                }
+                cout << "do you want to kick again? " << endl;
+                cin >> response;
+                if (response.compare("y") == 0){
+                    model.reset();
+                    cout << "Enter the x for next kick ";
+                    cin >> x;
+                    cout << "Enter the y for next kick ";
+                    cin >> y;
+                    cout << "Enter the z for next kick ";
+                    cin >> z;
+                    kick_vector = glm::vec3 {z, y, x};
+                }
             }
         }
         
@@ -213,14 +264,34 @@ void win_refresh (GLFWwindow *win) {
         glm::mat4x4 mat3 = (*objects->at(2).second);
         glm::mat4x4 mat4 = (*objects->at(3).second);
         glm::mat4x4 mat5 = (*objects->at(4).second);
-    
+        
+        glEnable(GL_TEXTURE_2D);
+
+        
         glUseProgram(0);
         glPushMatrix();
         glMultMatrixf(glm::value_ptr(mat1));
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texId);
+        int tex_handle = glGetUniformLocation(football_shader->id(), "football_tex");
+        glUniform1i(tex_handle, 0);
         football_shader->use();
         (*football).render(football_shader);
         glUseProgram(0);
         glPopMatrix();
+        
+        glPushMatrix();
+        glMultMatrixf(glm::value_ptr(plane_cf));
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texId2);
+        tex_handle = glGetUniformLocation(field_shader->id(), "field_tex");
+        glUniform1i(tex_handle, 0);
+        field_shader->use();
+        field.render(field_shader);
+        glUseProgram(0);
+        glPopMatrix();
+        
+        glDisable(GL_TEXTURE_2D);
     
         glPushMatrix();
         glMultMatrixf(glm::value_ptr(mat2));
@@ -262,8 +333,8 @@ void init_gl() {
     /* Enable shading */
     glEnable (GL_LIGHTING);
     glEnable (GL_NORMALIZE); /* Tell OpenGL to renormalize normal vector
-                              after transformation */
-    
+       
+                              */
     /* initialize two light sources */
     glEnable (GL_LIGHT0);
     glLightfv (GL_LIGHT0, GL_AMBIENT, light0_color);
@@ -289,12 +360,13 @@ void init_gl() {
     camera_cf = glm::scale(glm::vec3 {.02,.02,.02}) * camera_cf;
     
     initShaders();
+    initFieldShaders();
     
     
     model.init();
     objects = model.get_objects();
-    ball.build("Copper");
-    
+    field.build_with_params(450, 600);
+    plane_cf = glm::translate(glm::vec3{-225, -240, 0});
 }
 
 void make_model() {
@@ -336,8 +408,45 @@ void key_handler (GLFWwindow *win, int key, int scan_code, int action, int mods)
                 camera_cf = glm::translate(glm::vec3{0, .05, 0}) * camera_cf;
                 break;
             case GLFW_KEY_0:
-                model.kick(glm::vec3{0, 5, 7});
+                model.kick(kick_vector);
                 break;
+            case GLFW_KEY_A: //up
+                model.football_cf = glm::translate(glm::vec3{0, 0, 1}) * model.football_cf;
+                break;
+            case GLFW_KEY_B: //down
+                model.football_cf = glm::translate(glm::vec3{0, 0, -1}) * model.football_cf;
+                break;
+            case GLFW_KEY_C: //right
+                model.football_cf = glm::translate(glm::vec3{1, 0, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_D: //left
+                model.football_cf = glm::translate(glm::vec3{-1, 0, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_E: //in
+                model.football_cf = glm::translate(glm::vec3{0, 1, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_F: //out
+                model.football_cf = glm::translate(glm::vec3{0, -1, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_G: //rotate +x
+                model.football_cf = glm::rotate(glm::radians(10.0f), glm::vec3{1, 0, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_H: //rotate -x
+                model.football_cf = glm::rotate(glm::radians(-10.0f), glm::vec3{1, 0, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_I: //rotate +y
+                model.football_cf = glm::rotate(glm::radians(10.0f), glm::vec3{0, 1, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_J: //rotate -y
+                model.football_cf = glm::rotate(glm::radians(-10.0f), glm::vec3{0, 1, 0}) * model.football_cf;
+                break;
+            case GLFW_KEY_K: //rotate +z
+                model.football_cf = glm::rotate(glm::radians(10.0f), glm::vec3{0, 0, 1}) * model.football_cf;
+                break;
+            case GLFW_KEY_L: //rotate -z
+                model.football_cf = glm::rotate(glm::radians(-10.0f), glm::vec3{0, 0, 1}) * model.football_cf;
+                break;
+            
         }
     }
     win_refresh(win);
@@ -404,6 +513,8 @@ void scroll_handler (GLFWwindow *win, double xscroll, double yscroll) {
 int main(){
     /* initialize random seed: */
     srand (time(NULL));
+    cout << "run demo kick by pushing 0 to start game" << endl;
+    kick_vector = glm::vec3{0,0,0};
     
     if(!glfwInit()) {
         cerr << "Can't initialize GLFW" << endl;
