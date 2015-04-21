@@ -25,15 +25,15 @@ void Bleachers::render(bool)
         row.render(false);
         glPopMatrix();
     }
-
+    
     glPushMatrix();
     glTranslatef(125, 0, 62.5);
     backe.render(false);
     glPopMatrix();
-
+    
     glPushMatrix();
     glTranslatef(65, 0, 32.5);
     mide.render(false);
     glPopMatrix();
-
+    
 }

@@ -1,12 +1,20 @@
-#ifndef GLUQUADRICCYLINDER_H
-#define GLUQUADRICCYLINDER_H
+//
+//  GLUquadricCylinder.h
+//  ProjectTwo
+//
+//  Created by Joshua Engelsma on 3/14/15.
+//
+//
+
+#ifndef __ProjectTwo__GLUquadricCylinder__
+#define __ProjectTwo__GLUquadricCylinder__
 
 #include <stdio.h>
 #include <GLUT/GLUT.h>
 #include <string>
 using namespace std;
 class GLUquadricCylinder{
-
+    
 public:
     string MATERIAL = "Copper";
     float AMBIENT[4];
@@ -15,7 +23,8 @@ public:
     float SHININESS;
     GLUquadric* q_cyl;
     void build(string mat);
-    void render(float topr, float botr, float height);
+    void render(float topr, float botr, float h);
 };
 
-#endif // GLUQUADRICCYLINDER_H
+
+#endif /* defined(__ProjectTwo__GLUquadricCylinder__) */

@@ -34,20 +34,20 @@ void Upright::render(bool)
     glTranslatef(0, 0, 0);
     base.render(1, 1, 10);
     glPopMatrix();
-
+    
     //cross bar
     glPushMatrix();
     glTranslatef(-9.25, 0, 10);
     glRotatef(90.0, 0, 1, 0);
     cross_bar.render(1,1,18.5);
     glPopMatrix();
-
+    
     //upright 1
     glPushMatrix();
     glTranslatef(-9.25, 0, 10);
     upright1.render(1, 1, 20);
     glPopMatrix();
-
+    
     //upright 2
     glPushMatrix();
     glTranslatef(9.25, 0, 10);

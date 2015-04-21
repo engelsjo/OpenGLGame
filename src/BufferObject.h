@@ -4,7 +4,6 @@
 #include <windows.h>
 #endif
 #ifdef __APPLE__
-#define GLEW_STATIC
 #include <GL/glew.h>
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/glu.h>

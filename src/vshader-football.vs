@@ -9,13 +9,13 @@ void main()
     v_pos = gl_Vertex;
 
 
-    v_texcoord.x = (gl_Normal.x + 1) / 2.0;
-    if(gl_Normal.y < 0) {
-        v_texcoord.y = (-gl_Normal.z + 1) / 2.0;
+    v_texcoord.x = (gl_Normal.x + 1.0) / 2.0;
+    if(gl_Normal.y < 0.0) {
+        v_texcoord.y = (-gl_Normal.z + 1.0) / 2.0;
 
     }
     else {
-        v_texcoord.y = (glNormal.z + 1) / 2.0;
+        v_texcoord.y = (gl_Normal.z + 1.0) / 2.0;
     }
 
    /* multiply each vertex with the ModelView Matrix and

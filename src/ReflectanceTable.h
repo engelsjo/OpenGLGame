@@ -1,5 +1,13 @@
-#ifndef REFLECTANCETABLE_H
-#define REFLECTANCETABLE_H
+//
+//  ReflectanceTable.h
+//  ProjectTwo
+//
+//  Created by Joshua Engelsma on 3/10/15.
+//
+//
+
+#ifndef __ProjectTwo__ReflectanceTable__
+#define __ProjectTwo__ReflectanceTable__
 
 #include <stdio.h>
 #include <stdio.h>
@@ -11,11 +19,15 @@
 using namespace std;
 class ReflectanceTable
 {
-
+    
 public:
-    std::map<string, map<string, vector<float> > > lookup_table;
+    map<string, map<string, vector<float>>> lookup_table;
     void init_table();
-    const std::map<string, map<string, vector<float> > > get_table();
+    const map<string, map<string, vector<float>>> get_table();
     const vector<float> get_comp(string material, string comp);
 };
-#endif // REFLECTANCETABLE_H
+
+
+#endif /* defined(__ProjectTwo__ReflectanceTable__) */
+
+

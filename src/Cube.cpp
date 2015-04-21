@@ -18,7 +18,7 @@ void Cube::build_with_params(float length, float width, float height, string mat
     HEIGHT = height;
     MATERIAL = material;
 
-    build((void*)0);
+    build(nullptr);
 }
 
 void Cube::build(void* data) {
@@ -50,7 +50,7 @@ void Cube::build(void* data) {
     all_points.push_back(v7);
 
     //push back the normals
-    //use [+-1, +-1, +-1] / sqrt(3)
+    /* use [+-1, +-1, +-1] / sqrt(3) */
     vec3 n0 = vec3{-1/sqrt(3), -1/sqrt(3), 1/sqrt(3)};
     vec3 n1 = vec3{1/sqrt(3), -1/sqrt(3), 1/sqrt(3)};
     vec3 n2 = vec3{1/sqrt(3), 1/sqrt(3), 1/sqrt(3)};
@@ -130,7 +130,7 @@ void Cube::build(void* data) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, all_index.size() * sizeof(GLushort), all_index.data(), GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    post_build();
+    //post_build();
     top_count = 24;
 
 

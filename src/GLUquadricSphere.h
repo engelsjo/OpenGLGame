@@ -1,12 +1,20 @@
-#ifndef GLUQUADRICSPHERE_H
-#define GLUQUADRICSPHERE_H
+//
+//  GLUquadricSphere.h
+//  ProjectTwo
+//
+//  Created by Joshua Engelsma on 3/14/15.
+//
+//
+
+#ifndef __ProjectTwo__GLUquadricSphere__
+#define __ProjectTwo__GLUquadricSphere__
 
 #include <stdio.h>
 #include <GLUT/GLUT.h>
 #include <string>
 using namespace std;
 class GLUquadricSphere{
-
+    
 public:
     string MATERIAL = "Emerald";
     float AMBIENT[4];
@@ -15,7 +23,7 @@ public:
     float SHININESS;
     GLUquadric* q_cyl;
     void build(string mat);
-    void render(float rad);
+    void render(float r);
 };
 
-#endif // GLUQUADRICSPHERE_H
+#endif /* defined(__ProjectTwo__GLUquadricSphere__) */

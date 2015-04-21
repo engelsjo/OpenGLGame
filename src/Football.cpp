@@ -3,23 +3,24 @@
 #include <iostream>
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/quaternion.hpp>
+#define SCALE 50.0
 
-void Football::build ()) {
+void Football::build () {
     vector<GLushort> indices;
     vector<GLfloat> vertices, normals;
 
     for(int i = -5; i <= 5; i++) {
         float x = i/10.0;
-        float r = .5 * (0.5 - abs(x));
+        float r =  sqrt(.125 - .5 * x * x);
 
         for(int j = -5; j <= 5; j++) {
             float y = r / 5.0 * j;
             float z = sqrt(r*r - y*y);
-            vertices.push_back(x);
-            vertices.push_back(y);
-            vertices.push_back(z);
+            vertices.push_back(x * SCALE);
+            vertices.push_back(y * SCALE);
+            vertices.push_back(z * SCALE);
 
-            glm::vec3 n {x, y, z}
+            glm::vec3 n {x, y, z};
             glm::normalize(n);
 
             normals.push_back(n.x);
@@ -29,11 +30,11 @@ void Football::build ()) {
         for(int j = 4; j >= -4; j--) {
             float y = r / 5.0 * j;
             float z = -sqrt(r*r - y*y);
-            vertices.push_back(x);
-            vertices.push_back(y);
-            vertices.push_back(z);
+            vertices.push_back(x * SCALE);
+            vertices.push_back(y * SCALE);
+            vertices.push_back(z * SCALE);
 
-            glm::vec3 n {x, y, z}
+            glm::vec3 n {x, y, z};
             glm::normalize(n);
 
             normals.push_back(n.x);
@@ -93,7 +94,7 @@ void Football::render(Shader* s) const {
     const int N = 3; // + (fullTorus ? 2 : 0);
     for (int k = 0; k < 40 * 9; k++) {
         /* each triangle must be rendered using a separate call */
-        glDrawElements(GL_TRIANGLE, N,
+        glDrawElements(GL_TRIANGLES, N,
                 GL_UNSIGNED_SHORT, ptr);
         ptr += N;
     }
