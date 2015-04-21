@@ -67,7 +67,7 @@ public:
     void reset();
     vector< pair<void*, glm::mat4x4*> >* get_objects();
     void kick( glm::vec3 );
-    
+    glm::vec3 get_wind_speed();
 };
 
 #endif // GAME_H_INCLUDED

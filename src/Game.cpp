@@ -59,15 +59,15 @@ void Game::generate_conditions() {
 
 void Game::update() {
     if(is_kicked) {
-        float elapsed_time = timer.elapsed() * 1000;
-        timer.reset();
+        float elapsed_time = timer.elapsed();
         cout << elapsed_time << endl;
-        
+        //float elapsed_time = 1.0;
+        timer.reset();
         football_cf *= glm::translate(elapsed_time * (football_speed + wind_speed));
-        football_cf *= glm::translate(elapsed_time * football_speed);
+        //football_cf *= glm::translate(elapsed_time * football_speed);
         football_speed += elapsed_time * GRAVITY;
         
-        football_cf = glm::rotate(elapsed_time, glm::vec3{0, 1, 0}) * football_cf;
+        football_cf *= glm::rotate(elapsed_time, glm::vec3{0, 1, 0});
         
         if(football_cf_values[13] >= 150) {
             //check for field goal
@@ -106,4 +106,8 @@ void Game::kick( glm::vec3 velocity ) {
     timer.reset();
     is_kicked = true;
     football_speed = velocity;
+}
+
+glm::vec3 Game::get_wind_speed() {
+    return wind_speed;
 }

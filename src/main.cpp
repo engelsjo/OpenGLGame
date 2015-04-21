@@ -184,7 +184,7 @@ void win_refresh (GLFWwindow *win) {
     /* we use the Z-axis of the light CF as the spotlight direction */
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, glm::value_ptr(glm::column(light1_cf, 2)));
     
-    if (objects != NULL){
+    if(objects != NULL){
         model.update();
         int score = model.get_score();
         
@@ -192,20 +192,15 @@ void win_refresh (GLFWwindow *win) {
             if (score == 0){
                 //you suck.. you missed
                 std::cout << "You missed" << std::endl;
-                model.reset();
+                //model.reset();
                 
             }else{
                 //you scored some points
                 std::cout << "you scored " << score << " " << endl;
-                model.reset();
+                //model.reset();
             }
         }
         
-    }
-    
-    
-    if (objects == NULL){}
-    else{
         Football* football = (Football*)objects->at(0).first;
         Upright* upright = (Upright*)objects->at(1).first;
         Bleachers* bleacher = (Bleachers*)objects->at(2).first;
@@ -221,7 +216,6 @@ void win_refresh (GLFWwindow *win) {
     
         glUseProgram(0);
         glPushMatrix();
-        cout << "translating" << endl;
         glMultMatrixf(glm::value_ptr(mat1));
         football_shader->use();
         (*football).render(football_shader);
@@ -342,7 +336,7 @@ void key_handler (GLFWwindow *win, int key, int scan_code, int action, int mods)
                 camera_cf = glm::translate(glm::vec3{0, .05, 0}) * camera_cf;
                 break;
             case GLFW_KEY_0:
-                model.kick(glm::vec3{0, 50, 150});
+                model.kick(glm::vec3{0, 5, 7});
                 break;
         }
     }
