@@ -35,6 +35,7 @@
 #include "Bleachers.h"
 #include "Football.h"
 #include "Game.h"
+#include "GLUquadricSphere.h"
 
 void init_model();
 void win_refresh(GLFWwindow*);
@@ -52,6 +53,7 @@ GLfloat light1_color[] = {1.0, 1.0, 0.8, 1.0};  /* color */
 GLfloat black_color[] = {0.0, 0.0, 0.0, 1.0};   /* color */
 
 Game model;
+GLUquadricSphere ball;
 
 //image path
 const string TOP_DIR = "/Users/joshuaengelsma/Documents/CIS-367/Project4/";
@@ -59,6 +61,8 @@ const string TOP_DIR = "/Users/joshuaengelsma/Documents/CIS-367/Project4/";
 Shader * football_shader;
 unsigned char* football_texture;
 GLuint texId;
+
+vector< pair< void*, glm::mat4x4* > >* objects;
 
 
 
@@ -180,39 +184,44 @@ void win_refresh (GLFWwindow *win) {
     /* we use the Z-axis of the light CF as the spotlight direction */
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, glm::value_ptr(glm::column(light1_cf, 2)));
     
-    model.update();
-    int score = model.get_score();
-    
-    if (score != -1){ //we need to act... something happened
-        if (score == 0){
-            //you suck.. you missed
-            std::cout << "You missed" << std::endl;
-            model.reset();
-            
-        }else{
-            //you scored some points
-            std::cout << "you scored " << score << " " << endl;
-            model.reset();
+    if (objects != NULL){
+        model.update();
+        int score = model.get_score();
+        
+        if (score != -1){ //we need to act... something happened
+            if (score == 0){
+                //you suck.. you missed
+                std::cout << "You missed" << std::endl;
+                model.reset();
+                
+            }else{
+                //you scored some points
+                std::cout << "you scored " << score << " " << endl;
+                model.reset();
+            }
         }
+        
     }
     
-    auto objects = model.get_objects();
-    if (objects.size() != 0){
-        Football* football = (Football*)objects[0].first;
-        Upright* upright = (Upright*)objects[1].first;
-        Bleachers* bleacher = (Bleachers*)objects[2].first;
-        Bleachers* bleacher1 = (Bleachers*)objects[3].first;
-        Upright* upright1 = (Upright*)objects[4].first;
+    
+    if (objects == NULL){}
+    else{
+        Football* football = (Football*)objects->at(0).first;
+        Upright* upright = (Upright*)objects->at(1).first;
+        Bleachers* bleacher = (Bleachers*)objects->at(2).first;
+        Bleachers* bleacher1 = (Bleachers*)objects->at(3).first;
+        Upright* upright1 = (Upright*)objects->at(4).first;
     
         //coord frames
-        glm::mat4x4 mat1 = objects[0].second;
-        glm::mat4x4 mat2 = objects[1].second;
-        glm::mat4x4 mat3 = objects[2].second;
-        glm::mat4x4 mat4 = objects[3].second;
-        glm::mat4x4 mat5 = objects[4].second;
+        glm::mat4x4 mat1 = (*objects->at(0).second);
+        glm::mat4x4 mat2 = (*objects->at(1).second);
+        glm::mat4x4 mat3 = (*objects->at(2).second);
+        glm::mat4x4 mat4 = (*objects->at(3).second);
+        glm::mat4x4 mat5 = (*objects->at(4).second);
     
         glUseProgram(0);
         glPushMatrix();
+        cout << "translating" << endl;
         glMultMatrixf(glm::value_ptr(mat1));
         football_shader->use();
         (*football).render(football_shader);
@@ -289,6 +298,8 @@ void init_gl() {
     
     
     model.init();
+    objects = model.get_objects();
+    ball.build("Copper");
     
 }
 

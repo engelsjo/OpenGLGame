@@ -37,7 +37,7 @@ class Game {
 private:
     Timer timer;
     
-    vector<std::pair<void*, glm::mat4x4>> objects;
+    vector<std::pair<void*, glm::mat4x4*>>* objects;
     
     Football football;
     Upright uprights;
@@ -65,7 +65,7 @@ public:
     void update();
     int get_score();
     void reset();
-    vector< pair<void*, glm::mat4x4> > get_objects();
+    vector< pair<void*, glm::mat4x4*> >* get_objects();
     void kick( glm::vec3 );
     
 };

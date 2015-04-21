@@ -3,7 +3,7 @@
 #include <iostream>
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/quaternion.hpp>
-#define SCALE 50.0
+#define SCALE 25.0
 
 void Football::build () {
     vector<GLushort> indices;

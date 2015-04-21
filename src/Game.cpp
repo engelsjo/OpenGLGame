@@ -29,11 +29,12 @@ void Game::init() {
     
     //set the light sources
     /*light_cf = glm::translate(glm::vec3{-100, 100, 75});*/
-    objects.push_back(make_pair(&football, football_cf));
-    objects.push_back(make_pair(&uprights, uprights_cf));
-    objects.push_back(make_pair(&bleachers, bleachers_cf));
-    objects.push_back(make_pair(&bleachers1, bleachers1_cf));
-    objects.push_back(make_pair(&uprights1, uprights1_cf));
+    objects = new vector< pair< void*, glm::mat4x4* > >();
+    objects->push_back(make_pair(&football, &football_cf));
+    objects->push_back(make_pair(&uprights, &uprights_cf));
+    objects->push_back(make_pair(&bleachers, &bleachers_cf));
+    objects->push_back(make_pair(&bleachers1, &bleachers1_cf));
+    objects->push_back(make_pair(&uprights1, &uprights1_cf));
     
     score = -1;
     football_cf_values = (float*)glm::value_ptr(football_cf);
@@ -60,15 +61,17 @@ void Game::update() {
     if(is_kicked) {
         float elapsed_time = timer.elapsed() * 1000;
         timer.reset();
+        cout << elapsed_time << endl;
         
         football_cf *= glm::translate(elapsed_time * (football_speed + wind_speed));
+        football_cf *= glm::translate(elapsed_time * football_speed);
         football_speed += elapsed_time * GRAVITY;
         
-        football_cf = glm::rotate(elapsed_time, glm::vec3{0, 1, 0});
+        football_cf = glm::rotate(elapsed_time, glm::vec3{0, 1, 0}) * football_cf;
         
-        if(football_cf_values[3] <= 150) {
+        if(football_cf_values[13] >= 150) {
             //check for field goal
-            if(football_cf_values[11] > 20 && abs(football_cf_values[7]) < 10) {
+            if(football_cf_values[14] > 10 && abs(football_cf_values[12]) < 9.25) {
                 score = glm::length(wind_speed) + 20;
             }
             else {
@@ -76,7 +79,7 @@ void Game::update() {
             }
             is_kicked = false;
         }
-        else if(football_cf_values[11] <= 0) {
+        else if(football_cf_values[14] <= 0) {
             //hit ground, too short
             score = 0;
             football_speed = glm::vec3{0,0,0};
@@ -95,11 +98,12 @@ int Game::get_score() {
     return score;
 }
 
-vector< pair< void*, glm::mat4x4 > > Game::get_objects() {
+vector< pair< void*, glm::mat4x4* > >* Game::get_objects() {
     return objects;
 }
 
 void Game::kick( glm::vec3 velocity ) {
+    timer.reset();
     is_kicked = true;
     football_speed = velocity;
 }
